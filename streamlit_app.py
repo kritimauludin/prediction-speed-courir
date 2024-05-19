@@ -1,5 +1,13 @@
+import pickle
 import streamlit as st
 from math import *
+import numpy as np
+from tensorflow.keras.models import load_model
+
+model = load_model('ModelPredictionSpeedCourierKeras.h5')
+
+courierSpeedPrediction = 0
+predictRain = 50
 
 st.title("Courier Speed Prediction")
 
@@ -45,19 +53,46 @@ with col2 :
 distance = haversine(float(startLongitude), float(startLatitude), float(destLongitude), float(destLatitude)) * 1000 #ubah ke satuan meter
 
 with col1 : 
-    st.number_input("Jarak - m (auto)", int(distance),)
+    st.number_input("Jarak - m (auto)", int(distance), disabled=True)
 with col2 : 
-    speedAverage = st.number_input("Laju Rata-rata 30-50 : ", step=1)
+    speedAverage = st.number_input("Laju Rata-rata 30-50 : ", step=1, min_value=30, max_value=50)
 
 with col1 : 
-    potentialRain = st.number_input("Potential Rain Today (auto)", 50)
+    potentialRain = st.number_input("Potential Rain Today (auto)", predictRain, disabled=True)
 with col2 : 
     st.text("")
     st.info("Potensi cuaca aktual selama 3 jam")
 
-st.button("Prediksi Sekarang")
+with col1 : 
+    if st.button("Prediksi Sekarang") :
+        # Prepare the input data
+        input_data = np.array([[distance, speedAverage, potentialRain]])
+        input_data_reshaped = input_data.reshape((1, 1, 3))  # (samples, timesteps, features)
 
-courierSpeedPrediction = 10
+        courierSpeedPrediction = model.predict(input_data_reshaped)
+        courierSpeedPrediction = int(courierSpeedPrediction)
+with col2 :
+    st.text("")
+    st.text("")
+    st.text("")
+    
+with col1:
+    st.markdown("----------------")
+with col2:
+    st.markdown("----------------")
 
-st.markdown("----------------")
-st.success("Dengan jarak "+ str(int(distance)) +"m  dan Laju rata-rata kurir "+ str(speedAverage) +"km/h serta potensi hujan "+str(potentialRain)+"% maka prediksi kecepatan pengiriman kurir "+str(courierSpeedPrediction)+ " menit")
+message = """
+Variabel :\n
+- Jarak : """+ str(int(distance)) +"""m\n
+- Laju rata-rata kurir : """+ str(speedAverage) +"""km/h\n
+- Potensi hujan : """+str(potentialRain)+"""%
+"""
+
+output = """
+Hasil Prediksi Kecepatan Pengiriman Kurir :\n
+**"""+str(courierSpeedPrediction)+ """** menit
+"""
+with col1 : 
+    st.warning(message)
+with col2 : 
+    st.success(output)
