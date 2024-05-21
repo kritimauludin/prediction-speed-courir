@@ -1,13 +1,22 @@
-import pickle
 import streamlit as st
-from math import *
 import numpy as np
+from math import *
 from tensorflow.keras.models import load_model
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+
+url = "https://weather.com/id-ID/weather/hourbyhour/l/649d5fb3e40a54653934eae4ec15137dc83b1a1d6f5a4fc2accbb73a0a7e0e39"
+page = urlopen(url)
+html_bytes = page.read()
+html = html_bytes.decode("utf-8")
+soup = BeautifulSoup(html, "html.parser")
+
 
 model = load_model('ModelPredictionSpeedCourierKeras.h5')
 
 courierSpeedPrediction = 0
-predictRain = 50
+predictRain = soup.find('span', attrs={'data-testid':'PercentageValue'}).text
+predictRain = float(predictRain.replace('%', ''))
 
 st.title("Courier Speed Prediction")
 
@@ -58,10 +67,10 @@ with col2 :
     speedAverage = st.number_input("Laju Rata-rata 30-50 : ", step=1, min_value=30, max_value=50)
 
 with col1 : 
-    potentialRain = st.number_input("Potential Rain Today (auto)", predictRain, disabled=True)
+    potentialRain = st.number_input("Potential Rain Today (auto)%", int(predictRain), disabled=True)
 with col2 : 
     st.text("")
-    st.info("Potensi cuaca aktual selama 3 jam")
+    st.info("Potensi cuaca aktual 1 jam kedepan")
 
 with col1 : 
     if st.button("Prediksi Sekarang") :
@@ -70,7 +79,6 @@ with col1 :
         input_data_reshaped = input_data.reshape((1, 1, 3))  # (samples, timesteps, features)
 
         courierSpeedPrediction = model.predict(input_data_reshaped)
-        courierSpeedPrediction = int(courierSpeedPrediction)
 with col2 :
     st.text("")
     st.text("")
@@ -90,7 +98,7 @@ Variabel :\n
 
 output = """
 Hasil Prediksi Kecepatan Pengiriman Kurir :\n
-**"""+str(courierSpeedPrediction)+ """** menit
+**"""+str("%.1f" % courierSpeedPrediction)+ """** menit
 """
 with col1 : 
     st.warning(message)
