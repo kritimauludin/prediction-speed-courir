@@ -13,7 +13,50 @@ with st.sidebar:
     selected = option_menu("Main Menu", ["Prediction", 'Visualization'], 
         icons=['house', 'gear'], menu_icon="cast", default_index=1)
 
-if selected == "Prediction" :
+if selected == "Visualization" : 
+    st.title("Visualisasi Model")
+    option = st.selectbox(
+        "Pilih tampilan yang kamu inginkan?",
+        ("'Dataset'", "'Korelasi Variabel'", "'Grafik Prediksi'", "'Insight Untuk Perusahaan'"),
+        index=None,
+        placeholder="Pilih Tampilan...",
+    )
+
+    st.write("Mode Tampilan:", option)
+    if option == "'Dataset'" :
+        st.markdown('<div style="text-align: justify;">Faktor yang akan dibentuk dalam dataset ini diantaranya jarak titik awal ke titik tujuan X1-(distance), kecepatan rata-rata kendaraan yang dicapai oleh kurir X2-(speed_average) dan terakhir kondisi cuaca terutama dalam hal ini adalah hujan X3-(potential_rain). Dataset history pengiriman Radar Bogor menyediakan 3 variabel yaitu distance, speed_average, dan duration. Variable potential_rain didapat dari sumber open weather yang dicleaning sebelum digabungkan dengan dataset history pengiriman.</div>', unsafe_allow_html=True)
+        left_co, cent_co,last_co = st.columns(3)
+        with cent_co: 
+            st.image('image/dataset-building.png', width=300, caption='Proses Pembentukan Dataset')
+        
+        st.markdown('<div style="text-align: justify;">Dataset dari history pengiriman dan open weather akan digabungkan sehingga akan memudahkan dalam proses analisis, pengambilan knowledge dan pembangunan model dan untuk karakteristik hasil penggabungan menjadi dataset seperti berikut.</div>', unsafe_allow_html=True)
+        st.image('image/karakteristik-dataset.png', width=700, caption='Proses Pembentukan Dataset')
+    elif option == "'Korelasi Variabel'" :
+        st.image('image/tabel-korelasi.png', width=700, caption='Tabel Korelasi Variabel')
+        st.markdown('<div style="text-align: justify;">Nilai korelasi yang menjauh dari angka 1 bahkan terkadang sampai negatif menandakan variable tersebut tidak berkaitan. Variabel duration dan distance memiliki nilai 0.894523 dimana nilai mendekati 1.00000 yang artinya variabel tersebut sangat terhubung.</div>', unsafe_allow_html=True)
+    
+        st.image('image/grafik-korelasi.png', width=700, caption='Korelasi Variabel')
+        st.markdown('<div style="text-align: justify;">Tampak ada hubungan positif yang jelas di mana durasi meningkat seiring dengan peningkatan jarak. Ini menunjukkan bahwa perjalanan yang lebih panjang cenderung memakan waktu lebih lama. Korelasi yang sangat positif antara duration dan potential rain, maka artinya durasi suatu kejadian (misalnya perjalanan) cenderung meningkat seiring dengan peningkatan potensi hujan. </div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify;">Kondisi cuaca yang lebih buruk (hujan) cenderung menyebabkan perjalanan yang lebih lama. Ini bisa disebabkan oleh berbagai faktor seperti jalan licin, kurir mengamankan surat kabar, kecepatan kendaraan yang lebih lambat, atau lalu lintas yang lebih padat.</div>', unsafe_allow_html=True)
+    elif option == "'Grafik Prediksi'" :
+        st.markdown('<div style="text-align: justify;">Model yang sudah diinisialisasi dan diujikan perlu dilihat nilai loss, nilai ini akan ditampilkan dalam bentuk grafik menggunakan fungsi loss dari MSE dengan metric default MAE.</div>', unsafe_allow_html=True)
+        st.image('image/loss-mse.png', width=700)
+        st.markdown('<div style="text-align: justify;">Grafik tersebut menunjukan nilai loss  menghasilkan model yang sangat baik karena nilai validation loss bergerak searah dengan nilai training dan mulai bergerak searah diantara nilai epoch 5 sampai dengan 60. Selanjutnya Metris MSE.</div>', unsafe_allow_html=True)
+        st.image('image/metric-mse.png', width=700)
+        st.markdown('<div style="text-align: justify;">Grafik MSE juga menunjukan pergerakan yang searah juga mengikuti nilai trainingnya. Pergerakan searah ini dinamakan sebagai kondisi konvergen, sebaliknya jika grafik menunjukan kondisi berlawanan dan tidak searah makan dinamakan divergen.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify;">Perbandingan antara data aktual dan data prediksi dari proses pengolahan model menggunakan data training dan data testing akan ditunjukan.</div>', unsafe_allow_html=True)
+        
+        st.image('image/aktual-prediksi-train.png', width=700)
+        st.markdown('<div style="text-align: justify;">Grafik tersebut menunjukan perbandingan data aktual dan prediksi pada proses training yang menunjukan hasil cukup baik. Jarak eror dari yang ditunjukan tidak terlalu jauh dengan menghasilkan nilai MAPE 0,07. </div>', unsafe_allow_html=True)
+    
+        st.image('image/aktual-prediksi-test.png', width=700)
+        st.markdown('<div style="text-align: justify;">Grafik tersebut juga menunjukan bahwa data prediksi tidak begitu jauh dengan data aktualnya serta pada grafiknya menunjukan pergerakan yang searah dengan nilai MAPE 0,07.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; font-weight: bold;">Nilai MAPE tersebut dapat dikategorikan sangat baik karena berada pada range <10% MAPE.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-top: 15px; font-weight: bold;">Catatan penting : Forcasting atau peramalan tidak harus selalu 100% akurat, karena kesalahan merupakan salah satu dari sifat melakukan peramalan, tetapi tidak mengurangi manfaat dan fungsi yang dapat dilakukan oleh kegiatan ini.</div>', unsafe_allow_html=True)
+
+
+
+elif selected == "Prediction" :
     url = "https://weather.com/id-ID/weather/hourbyhour/l/649d5fb3e40a54653934eae4ec15137dc83b1a1d6f5a4fc2accbb73a0a7e0e39"
     page = urlopen(url)
     html_bytes = page.read()
@@ -154,6 +197,4 @@ if selected == "Prediction" :
         st.warning(message)
     with col2 : 
         st.success(output)
-
-elif selected == "Visualization" :
-    st.title("Visualisasi Dataset")
+    
