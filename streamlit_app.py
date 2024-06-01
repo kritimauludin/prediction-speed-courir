@@ -35,9 +35,9 @@ if selected == "Visualization" :
         st.image('image/tabel-korelasi.png', width=700, caption='Tabel Korelasi Variabel')
         st.markdown('<div style="text-align: justify;">Nilai korelasi yang menjauh dari angka 1 bahkan terkadang sampai negatif menandakan variable tersebut tidak berkaitan. Variabel duration dan distance memiliki nilai 0.894523 dimana nilai mendekati 1.00000 yang artinya variabel tersebut sangat terhubung.</div>', unsafe_allow_html=True)
     
-        st.image('image/grafik-korelasi.png', width=700, caption='Korelasi Variabel')
+        st.image('image/grafik-korelasi.png', width=700)
         st.markdown('<div style="text-align: justify;">Tampak ada hubungan positif yang jelas di mana durasi meningkat seiring dengan peningkatan jarak. Ini menunjukkan bahwa perjalanan yang lebih panjang cenderung memakan waktu lebih lama. Korelasi yang sangat positif antara duration dan potential rain, maka artinya durasi suatu kejadian (misalnya perjalanan) cenderung meningkat seiring dengan peningkatan potensi hujan. </div>', unsafe_allow_html=True)
-        st.markdown('<div style="text-align: justify;">Kondisi cuaca yang lebih buruk (hujan) cenderung menyebabkan perjalanan yang lebih lama. Ini bisa disebabkan oleh berbagai faktor seperti jalan licin, kurir mengamankan surat kabar, kecepatan kendaraan yang lebih lambat, atau lalu lintas yang lebih padat.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-top:10px;">Kondisi cuaca yang lebih buruk (hujan) cenderung menyebabkan perjalanan yang lebih lama. Ini bisa disebabkan oleh berbagai faktor seperti jalan licin, kurir mengamankan surat kabar, kecepatan kendaraan yang lebih lambat, atau lalu lintas yang lebih padat.</div>', unsafe_allow_html=True)
     elif option == "'Grafik Prediksi'" :
         st.markdown('<div style="text-align: justify;">Model yang sudah diinisialisasi dan diujikan perlu dilihat nilai loss, nilai ini akan ditampilkan dalam bentuk grafik menggunakan fungsi loss dari MSE dengan metric default MAE.</div>', unsafe_allow_html=True)
         st.image('image/loss-mse.png', width=700)
@@ -53,7 +53,28 @@ if selected == "Visualization" :
         st.markdown('<div style="text-align: justify;">Grafik tersebut juga menunjukan bahwa data prediksi tidak begitu jauh dengan data aktualnya serta pada grafiknya menunjukan pergerakan yang searah dengan nilai MAPE 0,07.</div>', unsafe_allow_html=True)
         st.markdown('<div style="text-align: justify; font-weight: bold;">Nilai MAPE tersebut dapat dikategorikan sangat baik karena berada pada range <10% MAPE.</div>', unsafe_allow_html=True)
         st.markdown('<div style="text-align: justify; margin-top: 15px; font-weight: bold;">Catatan penting : Forcasting atau peramalan tidak harus selalu 100% akurat, karena kesalahan merupakan salah satu dari sifat melakukan peramalan, tetapi tidak mengurangi manfaat dan fungsi yang dapat dilakukan oleh kegiatan ini.</div>', unsafe_allow_html=True)
+    elif option == "'Insight Untuk Perusahaan'" :
+        st.markdown('<div style="text-align: justify;">Berdasarkan hasil evaluasi model LSTM yang telah dilakukan, berikut adalah beberapa insight dan rekomendasi yang dapat perusahaan pertimbangkan untuk meningkatkan kecepatan pengiriman. Berikut insight dari penulis:</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">1.	Perjalanan pengiriman terlama memakan waktu hingga 25 menit, dan perjalanan pengiriman tercepat hanya 2 menit.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">2.	Jarak pengiriman terjauh 5600 meter dan jarak pengiriman terdekat 50 meter.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">3.	Kecepatan rata-rata yang bisa ditempuh oleh kurir dalam melakukan pengiriman berada dirange 30-50 km/jam.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">4.	Potensi hujan dapat mempengaruhi durasi perjalanan dengan kemungkinan besar karena faktor seperti jalan licin, kurir mengamankan surat kabar, kecepatan kendaraan yang lebih lambat, atau lalu lintas yang lebih padat.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">5.	Beberapa record dalam dataset menunjukkan durasi pengiriman bernilai 0, kemungkinan disebabkan oleh gangguan koneksi internet saat kurir melakukan stamp, sehingga data yang terekam tidak lengkap.</div>', unsafe_allow_html=True)
 
+        st.markdown('<div style="text-align: justify; margin-top: 20px;">Dari beberapa insight diatas, maka rekomendasi untuk perusahaan sebagai berikut :</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">1.	Melakukan evaluasi agar jarak antar titik pengiriman tidak terlalu jauh sehingga kurir dapat meminimalkan durasi pengiriman sehingga kecepatan pengiriman menjadi lebih baik.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">2.	Membuat standar maksimal jarak pengiriman antar titik sehingga jarak tidak terlalu jauh.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">3.	Kecepatan rata-rata kurir sudah cukup baik mengingat faktor keamanan dan batas kecepatan kendaraan dijalanan.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">4.	Membekali kurir jas hujan serta pelindung surat kabar anti air, agar ketika terjadi hujan kurir dapat langsung meneruskan pengiriman dan meminimalisir surat kabar rusak terkena air.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">5.	Memastikan durasi pengiriman terekap secara keseluruhan agar ketika dataset diperlukan kolomnya terisi secara lengkap.</div>', unsafe_allow_html=True)
+        
+        st.markdown('<div style="text-align: justify; margin-top: 20px;">Saran untuk model yang saat ini dibuat : </div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">1.	Melakukan perbandingan dengan menggunakan algoritma prediksi lainnya.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">2.	Membentuk model yang lebih baik lagi dengan mengkaji parameter yang digunakan</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">3.	Menambahkan fitur baru seperti data kemacetan dari data lalu lintas </div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">4.	Pengembangan model prediksi ini hingga bisa digunakan secara realtime dan menjadi sistem rekomendasi</div>', unsafe_allow_html=True)
+    
+        st.markdown('<div style="text-align: justify; margin-top: 20px; font-weight: bold;">Kesimpulan : <br>Dengan mengikuti rekomendasi di atas, perusahaan dapat meningkatkan efisiensi dan kecepatan pengiriman, yang pada akhirnya dapat meningkatkan kepuasan pelanggan dan efisiensi operasional. Melalui optimisasi rute, penyediaan fasilitas yang tepat bagi kurir, dan pengumpulan data yang akurat, perusahaan dapat meminimalkan penundaan dan meningkatkan kinerja layanan pengiriman secara keseluruhan.</div>', unsafe_allow_html=True)
 
 
 elif selected == "Prediction" :
