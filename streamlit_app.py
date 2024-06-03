@@ -3,9 +3,6 @@ import numpy as np
 from math import *
 from streamlit_option_menu import option_menu
 # import library LSTM
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import LSTM
 from tensorflow.keras.models import load_model
 #import minmax
 from sklearn.preprocessing import MinMaxScaler
