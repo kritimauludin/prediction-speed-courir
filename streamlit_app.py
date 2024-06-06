@@ -1,15 +1,53 @@
 import streamlit as st
+import csv
+import folium
+import jinja2
 import numpy as np
 from math import *
+import pandas as pd
+#menu sidebar
 from streamlit_option_menu import option_menu
 # import library LSTM
 from tensorflow.keras.models import load_model
 #import minmax
 from sklearn.preprocessing import MinMaxScaler
+#getting potential rain
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+#pembagian data
 from sklearn.model_selection import train_test_split
-import pandas as pd
+#folium
+from streamlit_folium import st_folium
+
+startLatitude = float(0)
+startLongitude = float(0)
+destLatitude = float(0)
+destLongitude = float(0)
+
+customerfile = 'dataset/customers-all.csv';
+
+@st.cache_data
+def read_data() :
+    data = []
+    with open(customerfile, 'r') as csvfile : 
+        reader = csv.DictReader(csvfile)
+        for row in reader :
+            data.append({
+                'customer_name' : row['customer_name'],
+                'latitude' : float(row['latitude']),
+                'longitude' : float(row['longitude'])
+            })
+    return data
+
+data = read_data()
+
+CONNECTION_CENTER = (-6.6061381, 106.801851)
+
+def get_lat_lng(lat, lng) :
+    return float(lat), float(lng)
+
+
+# startLatitude, startLongitude = set_start_point(-6.6061381, 106.801851)
 
 with st.sidebar:
     selected = option_menu("Main Menu", ["Prediction", 'Visualization'], 
@@ -150,28 +188,49 @@ elif selected == "Prediction" :
 
         return duration
 
+    st.write('Klik untuk pilih destinasi. Start point Gedung Graha pena Radar Bogor!')
+    mapfolium = folium.Map(location=CONNECTION_CENTER, zoom_start=10)
+    # mapfolium.add_child(folium.LatLngPopup())
+    for customer in data :
+        location = customer['latitude'], customer['longitude']
+        folium.Marker(
+            location, 
+            popup=customer['customer_name']
+            #  popup = f'<input type="text" value="{location[0]}, {location[1]}" id="myInput"><button onclick="myFunction()">Set Start Point</button>'
+        ).add_to(mapfolium)
+
+    stmap = st_folium(mapfolium, width=700, height=500)
+    
+    startLatitude =  float('-6.5567821')
+    startLongitude = float('106.7706184')
+    if stmap['last_object_clicked'] is not None:
+        destLatitude, destLongitude = get_lat_lng(stmap['last_object_clicked']['lat'], stmap['last_object_clicked']['lng'])
+
     #pembagian kolom
     col1, col2 = st.columns(2)
 
     with col1 : 
         startLatitude = st.number_input(
                             "Start Latitude",
+                            value=startLatitude,
                             step=1e-6,
                             format="%.6f")
     with col2 : 
         startLongitude = st.number_input(
                             "Start Longitude",
+                            value=startLongitude,
                             step=1e-6,
                             format="%.6f")
 
     with col1 : 
         destLatitude = st.number_input(
                             "Destination Latitude",
-                            step=1e-6,
+                            value=destLatitude,
                             format="%.6f")
     with col2 : 
         destLongitude = st.number_input(
                             "Destination Longitude",
+                            value=destLongitude,
                             step=1e-6,
                             format="%.6f")
 
@@ -190,10 +249,6 @@ elif selected == "Prediction" :
 
     with col1 : 
         if st.button("Prediksi Sekarang") :
-            # Prepare the input data
-            #input_data = np.array([[distance, speedAverage, potentialRain]])
-            #input_data_reshaped = input_data.reshape((1, 1, 3))  # (samples, timesteps, features)
-
             courierSpeedPrediction = PredictionSpeedCourier(distance, speedAverage, potentialRain)
     with col2 :
         st.text("")
