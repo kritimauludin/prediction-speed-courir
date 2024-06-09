@@ -18,11 +18,10 @@ from urllib.request import urlopen
 from sklearn.model_selection import train_test_split
 #folium
 from streamlit_folium import st_folium
+from folium.features import DivIcon
 
 startLatitude = float(0)
 startLongitude = float(0)
-destLatitude = float(0)
-destLongitude = float(0)
 
 customerfile = 'dataset/customers-all.csv';
 
@@ -45,9 +44,6 @@ CONNECTION_CENTER = (-6.6061381, 106.801851)
 
 def get_lat_lng(lat, lng) :
     return float(lat), float(lng)
-
-
-# startLatitude, startLongitude = set_start_point(-6.6061381, 106.801851)
 
 with st.sidebar:
     selected = option_menu("Main Menu", ["Prediction", 'Visualization'], 
@@ -168,7 +164,7 @@ elif selected == "Prediction" :
         dlat = lat2 - lat1
         a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
         c = 2 * asin(sqrt(a))
-        r = 6371  # Radius in km use 6371. Use 3956 for miles
+        r = 6371  # Radius in m use 6371. Use 3956 for miles
         return c * r
 
     def PredictionSpeedCourier(Distance, SpeedAverage, PotentialRain):
@@ -188,56 +184,117 @@ elif selected == "Prediction" :
 
         return duration
 
+    #map area
     st.write('Klik untuk pilih destinasi. Start point Gedung Graha pena Radar Bogor!')
     mapfolium = folium.Map(location=CONNECTION_CENTER, zoom_start=10)
-    # mapfolium.add_child(folium.LatLngPopup())
+    #start-point Radar Bogor
+    startLatitude =  float('-6.556787')
+    startLongitude = float('106.773193')
+
     for customer in data :
         location = customer['latitude'], customer['longitude']
         folium.Marker(
             location, 
             popup=customer['customer_name']
-            #  popup = f'<input type="text" value="{location[0]}, {location[1]}" id="myInput"><button onclick="myFunction()">Set Start Point</button>'
         ).add_to(mapfolium)
 
+    if len(st.session_state['destination']) > 1:
+        folium.PolyLine(st.session_state['coordinates'], color="blue", weight=2.5, opacity=1).add_to(mapfolium)
+
     stmap = st_folium(mapfolium, width=700, height=500)
+    # st.write(stmap)
+
+
+    # Initialize session state to store the locations
+    if 'destination' not in st.session_state:
+        st.session_state['destination'] = []
+
+    if 'coordinates' not in st.session_state:
+        st.session_state['coordinates'] = []
+
+    if 'distance' not in st.session_state:
+        st.session_state['distance'] = 0
+        
     
-    startLatitude =  float('-6.5567821')
-    startLongitude = float('106.7706184')
+    # Function to add a click to the session state and keep only the last three clicks
+    def add_destination(click):
+        coordinate = (click[1], click[2])
+        if click[0] not in [c[0] for c in st.session_state['destination']]:
+            st.session_state['destination'].append(click)
+            st.session_state['coordinates'].append(coordinate)
+
+            if len(st.session_state['destination']) >= 1:
+                st.session_state['distance']+= click[3]
+
     if stmap['last_object_clicked'] is not None:
-        destLatitude, destLongitude = get_lat_lng(stmap['last_object_clicked']['lat'], stmap['last_object_clicked']['lng'])
+        length = len(st.session_state['destination'])
+
+        latBefore = st.session_state['destination'][length-1][1]
+        lngBefore = st.session_state['destination'][length-1][2]
+
+        latStore = stmap['last_object_clicked']['lat']
+        lngStore = stmap['last_object_clicked']['lng']
+
+        distance = haversine(float(lngBefore), float(latBefore), float(lngStore), float(latStore)) * 1000 #ubah ke satuan meter
+        click = (
+            stmap['last_object_clicked_popup'],
+            latStore, 
+            lngStore,
+            distance,
+        )
+        add_destination(click)
+    elif len(st.session_state['destination']) == 0:
+        #start-point 
+        click = (
+            "Radar Bogor - startpoint",
+            startLatitude, 
+            startLongitude,
+            "Start Point"
+        )
+        add_destination(click)
+
+
+    # Display the destination clicked locations
+    if st.session_state['destination']:
+        st.write(st.session_state['destination'][0][0], ' - Start Point')
+        st.write("Destinasi :")
+        for idx, loc in enumerate(st.session_state['destination'][1:]):
+            st.write(f"{idx + 1}: {loc[0]} - {int(loc[3])} m")
+
+   
 
     #pembagian kolom
     col1, col2 = st.columns(2)
 
-    with col1 : 
-        startLatitude = st.number_input(
-                            "Start Latitude",
-                            value=startLatitude,
-                            step=1e-6,
-                            format="%.6f")
-    with col2 : 
-        startLongitude = st.number_input(
-                            "Start Longitude",
-                            value=startLongitude,
-                            step=1e-6,
-                            format="%.6f")
+    # with col1 : 
+    #     startLatitude = st.number_input(
+    #                         "Start Latitude",
+    #                         value=startLatitude,
+    #                         step=1e-6,
+    #                         format="%.6f")
+    # with col2 : 
+    #     startLongitude = st.number_input(
+    #                         "Start Longitude",
+    #                         value=startLongitude,
+    #                         step=1e-6,
+    #                         format="%.6f")
+
+    # with col1 : 
+    #     destLatitude = st.number_input(
+    #                         "Destination Latitude",
+    #                         value=destLatitude,
+    #                         format="%.6f")
+    # with col2 : 
+    #     destLongitude = st.number_input(
+    #                         "Destination Longitude",
+    #                         value=destLongitude,
+    #                         step=1e-6,
+    #                         format="%.6f")
+
+    distance = st.session_state['distance']
 
     with col1 : 
-        destLatitude = st.number_input(
-                            "Destination Latitude",
-                            value=destLatitude,
-                            format="%.6f")
-    with col2 : 
-        destLongitude = st.number_input(
-                            "Destination Longitude",
-                            value=destLongitude,
-                            step=1e-6,
-                            format="%.6f")
-
-    distance = haversine(float(startLongitude), float(startLatitude), float(destLongitude), float(destLatitude)) * 1000 #ubah ke satuan meter
-
-    with col1 : 
-        st.number_input("Jarak - m (auto)", int(distance), disabled=True)
+        distance = st.number_input("Jarak - m (auto)", value=int(distance), disabled=True)
     with col2 : 
         speedAverage = st.number_input("Laju Rata-rata 30-50 : ", step=1, min_value=30, max_value=50)
 
@@ -262,7 +319,7 @@ elif selected == "Prediction" :
 
     message = """
     Variabel :\n
-    - Jarak : """+ str(int(distance)) +"""m\n
+    - Jarak Total: """+ str(int(distance)) +"""m\n
     - Laju rata-rata kurir : """+ str(speedAverage) +"""km/h\n
     - Potensi hujan : """+str(potentialRain)+"""%
     """
