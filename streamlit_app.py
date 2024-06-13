@@ -22,6 +22,15 @@ from folium.features import DivIcon
 
 startLatitude = float(0)
 startLongitude = float(0)
+# Initialize session state to store the locations
+if 'destination' not in st.session_state:
+    st.session_state['destination'] = []
+
+if 'coordinates' not in st.session_state:
+    st.session_state['coordinates'] = []
+
+if 'distance' not in st.session_state:
+    st.session_state['distance'] = 0
 
 customerfile = 'dataset/customers-all.csv';
 
@@ -187,6 +196,7 @@ elif selected == "Prediction" :
     #map area
     st.write('Klik untuk pilih destinasi. Start point Gedung Graha pena Radar Bogor!')
     mapfolium = folium.Map(location=CONNECTION_CENTER, zoom_start=10)
+    mapplot = folium.Map(location=CONNECTION_CENTER, zoom_start=10)
     #start-point Radar Bogor
     startLatitude =  float('-6.556787')
     startLongitude = float('106.773193')
@@ -198,23 +208,9 @@ elif selected == "Prediction" :
             popup=customer['customer_name']
         ).add_to(mapfolium)
 
-    if len(st.session_state['destination']) > 1:
-        folium.PolyLine(st.session_state['coordinates'], color="blue", weight=2.5, opacity=1).add_to(mapfolium)
-
+    
     stmap = st_folium(mapfolium, width=700, height=500)
     # st.write(stmap)
-
-
-    # Initialize session state to store the locations
-    if 'destination' not in st.session_state:
-        st.session_state['destination'] = []
-
-    if 'coordinates' not in st.session_state:
-        st.session_state['coordinates'] = []
-
-    if 'distance' not in st.session_state:
-        st.session_state['distance'] = 0
-        
     
     # Function to add a click to the session state and keep only the last three clicks
     def add_destination(click):
@@ -261,7 +257,14 @@ elif selected == "Prediction" :
         for idx, loc in enumerate(st.session_state['destination'][1:]):
             st.write(f"{idx + 1}: {loc[0]} - {int(loc[3])} m")
 
-   
+    if len(st.session_state['destination']) > 1:
+        for customer in st.session_state['destination'] :
+            location = customer[1], customer[2]
+            folium.Marker(
+                location, 
+            ).add_to(mapplot)
+        folium.PolyLine(st.session_state['coordinates'], color="blue", weight=2.5, opacity=1).add_to(mapplot)
+        st_folium(mapplot, width=700, height=500)
 
     #pembagian kolom
     col1, col2 = st.columns(2)
@@ -325,8 +328,9 @@ elif selected == "Prediction" :
     """
 
     output = """
-    Hasil Prediksi Kecepatan Pengiriman Kurir :\n
-    **"""+str("%.1f" % courierSpeedPrediction)+ """** menit
+    Prediksi Kecepatan Pengiriman Kurir :\n
+    Dengan """+str(len(st.session_state['destination'])-1)+""" titik,\n 
+    Total Kecepatan **"""+str("%.1f" % courierSpeedPrediction)+ """** menit
     """
     with col1 : 
         st.warning(message)
