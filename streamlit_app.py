@@ -109,9 +109,8 @@ if selected == "Visualization" :
         st.markdown('<div style="text-align: justify; margin-top: 20px;">Dari beberapa insight diatas, maka rekomendasi untuk perusahaan sebagai berikut :</div>', unsafe_allow_html=True)
         st.markdown('<div style="text-align: justify; margin-left: 30px;">1.	Melakukan evaluasi agar jarak antar titik pengiriman tidak terlalu jauh sehingga kurir dapat meminimalkan durasi pengiriman sehingga kecepatan pengiriman menjadi lebih baik.</div>', unsafe_allow_html=True)
         st.markdown('<div style="text-align: justify; margin-left: 30px;">2.	Membuat standar maksimal jarak pengiriman antar titik sehingga jarak tidak terlalu jauh.</div>', unsafe_allow_html=True)
-        st.markdown('<div style="text-align: justify; margin-left: 30px;">3.	Kecepatan rata-rata kurir sudah cukup baik mengingat faktor keamanan dan batas kecepatan kendaraan dijalanan.</div>', unsafe_allow_html=True)
-        st.markdown('<div style="text-align: justify; margin-left: 30px;">4.	Membekali kurir jas hujan serta pelindung surat kabar anti air, agar ketika terjadi hujan kurir dapat langsung meneruskan pengiriman dan meminimalisir surat kabar rusak terkena air.</div>', unsafe_allow_html=True)
-        st.markdown('<div style="text-align: justify; margin-left: 30px;">5.	Memastikan durasi pengiriman terekap secara keseluruhan agar ketika dataset diperlukan kolomnya terisi secara lengkap.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">3.	Membekali kurir jas hujan serta pelindung surat kabar anti air, agar ketika terjadi hujan kurir dapat langsung meneruskan pengiriman dan meminimalisir surat kabar rusak terkena air.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">4.	Memastikan durasi pengiriman terekap secara keseluruhan agar ketika dataset diperlukan kolomnya terisi secara lengkap.</div>', unsafe_allow_html=True)
         
         st.markdown('<div style="text-align: justify; margin-top: 20px;">Saran untuk model yang saat ini dibuat : </div>', unsafe_allow_html=True)
         st.markdown('<div style="text-align: justify; margin-left: 30px;">1.	Melakukan perbandingan dengan menggunakan algoritma prediksi lainnya.</div>', unsafe_allow_html=True)
@@ -210,7 +209,6 @@ elif selected == "Prediction" :
 
     
     stmap = st_folium(mapfolium, width=700, height=500)
-    # st.write(stmap)
     
     # Function to add a click to the session state and keep only the last three clicks
     def add_destination(click):
@@ -220,7 +218,7 @@ elif selected == "Prediction" :
             st.session_state['coordinates'].append(coordinate)
 
             if len(st.session_state['destination']) >= 1:
-                st.session_state['distance']+= click[3]
+                st.session_state['distance']+= int(click[3])
 
     if stmap['last_object_clicked'] is not None:
         length = len(st.session_state['destination'])
@@ -249,13 +247,25 @@ elif selected == "Prediction" :
         )
         add_destination(click)
 
-
+    #pembagian kolom
+    col1, col2 = st.columns(2)
     # Display the destination clicked locations
     if st.session_state['destination']:
-        st.write(st.session_state['destination'][0][0], ' - Start Point')
-        st.write("Destinasi :")
+        with col1 : 
+            st.write(st.session_state['destination'][0][0], ' - Start Point')
+            st.write("Destinasi :")
+        with col2 :
+            st.text("")
+            st.text("")
+            st.text("")
+
         for idx, loc in enumerate(st.session_state['destination'][1:]):
-            st.write(f"{idx + 1}: {loc[0]} - {int(loc[3])} m")
+            if idx < 6:
+                with col1 : 
+                    st.write(f"{idx + 1}: {loc[0]} - {int(loc[3])} m")
+            elif idx >= 6 :
+                with col2 : 
+                    st.write(f"{idx + 1}: {loc[0]} - {int(loc[3])} m")
 
     if len(st.session_state['destination']) > 1:
         for customer in st.session_state['destination'] :
@@ -268,32 +278,6 @@ elif selected == "Prediction" :
 
     #pembagian kolom
     col1, col2 = st.columns(2)
-
-    # with col1 : 
-    #     startLatitude = st.number_input(
-    #                         "Start Latitude",
-    #                         value=startLatitude,
-    #                         step=1e-6,
-    #                         format="%.6f")
-    # with col2 : 
-    #     startLongitude = st.number_input(
-    #                         "Start Longitude",
-    #                         value=startLongitude,
-    #                         step=1e-6,
-    #                         format="%.6f")
-
-    # with col1 : 
-    #     destLatitude = st.number_input(
-    #                         "Destination Latitude",
-    #                         value=destLatitude,
-    #                         format="%.6f")
-    # with col2 : 
-    #     destLongitude = st.number_input(
-    #                         "Destination Longitude",
-    #                         value=destLongitude,
-    #                         step=1e-6,
-    #                         format="%.6f")
-
     distance = st.session_state['distance']
 
     with col1 : 
@@ -336,4 +320,3 @@ elif selected == "Prediction" :
         st.warning(message)
     with col2 : 
         st.success(output)
-    
