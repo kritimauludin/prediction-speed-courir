@@ -100,7 +100,7 @@ if selected == "Visualization" :
         st.markdown('<div style="text-align: justify; margin-top: 15px; font-weight: bold;">Catatan penting : Forcasting atau peramalan tidak harus selalu 100% akurat, karena kesalahan merupakan salah satu dari sifat melakukan peramalan, tetapi tidak mengurangi manfaat dan fungsi yang dapat dilakukan oleh kegiatan ini.</div>', unsafe_allow_html=True)
     elif option == "'Insight Untuk Perusahaan'" :
         st.markdown('<div style="text-align: justify;">Berdasarkan hasil evaluasi model LSTM yang telah dilakukan, berikut adalah beberapa insight dan rekomendasi yang dapat perusahaan pertimbangkan untuk meningkatkan kecepatan pengiriman. Berikut insight dari penulis:</div>', unsafe_allow_html=True)
-        st.markdown('<div style="text-align: justify; margin-left: 30px;">1.	Perjalanan pengiriman terlama memakan waktu hingga 25 menit, dan perjalanan pengiriman tercepat hanya 2 menit.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-left: 30px;">1.	Perjalanan pengiriman terlama memakan waktu hingga 25 menit, dan  pengiriman tercepat 2 menit.</div>', unsafe_allow_html=True)
         st.markdown('<div style="text-align: justify; margin-left: 30px;">2.	Jarak pengiriman terjauh 5600 meter dan jarak pengiriman terdekat 50 meter.</div>', unsafe_allow_html=True)
         st.markdown('<div style="text-align: justify; margin-left: 30px;">3.	Kecepatan rata-rata yang bisa ditempuh oleh kurir dalam melakukan pengiriman berada dirange 30-50 km/jam.</div>', unsafe_allow_html=True)
         st.markdown('<div style="text-align: justify; margin-left: 30px;">4.	Potensi hujan dapat mempengaruhi durasi perjalanan dengan kemungkinan besar karena faktor seperti jalan licin, kurir mengamankan surat kabar, kecepatan kendaraan yang lebih lambat, atau lalu lintas yang lebih padat.</div>', unsafe_allow_html=True)
@@ -118,7 +118,7 @@ if selected == "Visualization" :
         st.markdown('<div style="text-align: justify; margin-left: 30px;">3.	Menambahkan fitur baru seperti data kemacetan dari data lalu lintas </div>', unsafe_allow_html=True)
         st.markdown('<div style="text-align: justify; margin-left: 30px;">4.	Pengembangan model prediksi ini hingga bisa digunakan secara realtime dan menjadi sistem rekomendasi</div>', unsafe_allow_html=True)
     
-        st.markdown('<div style="text-align: justify; margin-top: 20px; font-weight: bold;">Kesimpulan : <br>Dengan mengikuti rekomendasi di atas, perusahaan dapat meningkatkan efisiensi dan kecepatan pengiriman, yang pada akhirnya dapat meningkatkan kepuasan pelanggan dan efisiensi operasional. Melalui optimisasi rute, penyediaan fasilitas yang tepat bagi kurir, dan pengumpulan data yang akurat, perusahaan dapat meminimalkan penundaan dan meningkatkan kinerja layanan pengiriman secara keseluruhan.</div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align: justify; margin-top: 20px; font-weight: bold;">Kesimpulan : <br>Dengan mengikuti rekomendasi di atas, perusahaan dapat meningkatkan efisiensi dan kecepatan pengiriman, meningkatkan kepuasan pelanggan, dan operasional. Optimalisasi rute, fasilitas kurir yang tepat, dan data akurat akan meminimalkan penundaan dan meningkatkan kinerja layanan pengiriman.</div>', unsafe_allow_html=True)
 
 
 elif selected == "Prediction" :
