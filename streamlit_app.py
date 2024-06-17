@@ -129,7 +129,7 @@ elif selected == "Prediction" :
     soup = BeautifulSoup(html, "html.parser")
 
     df=pd.read_csv("https://raw.githubusercontent.com/kritimauludin/prediction-speed-courir/main/dataset/user-distribution-all.csv", parse_dates=["created_at"],index_col=[0])
-    df = df.drop(["distribution_code", "customer_code", "total", "process_at", "received_at", "courier_last_stamp", "status", "updated_at"], axis='columns')
+    df = df.drop(["distribution_code", "customer_code", "total", "process_at", "received_at", "status"], axis='columns')
     df = df.drop(["start_latitude", "start_longitude", "dest_latitude", "dest_longitude", "created_at"], axis='columns')
 
     model = load_model('ModelPredictionSpeedCourierKeras.h5')
@@ -186,7 +186,7 @@ elif selected == "Prediction" :
 
         predictData = np.expand_dims(x, axis=1)
 
-        hasil = model.predict(predictData)
+        hasil = model.predict(predictData, verbose=3)
 
         duration=scalerY.inverse_transform(hasil)
 
