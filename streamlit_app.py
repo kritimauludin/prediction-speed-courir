@@ -158,9 +158,9 @@ elif selected == "Prediction" :
 
     courierSpeedPrediction = 0
     predictRain = soup.find('span', attrs={'data-testid':'PercentageValue'}).text
+    predictRain = float(predictRain.replace('%', ''))
     if predictRain < 30 :
         predictRain = 30
-    predictRain = float(predictRain.replace('%', ''))
 
     st.title("Prediksi Kecepatan Kurir")
 
