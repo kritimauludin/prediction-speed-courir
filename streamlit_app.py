@@ -158,6 +158,8 @@ elif selected == "Prediction" :
 
     courierSpeedPrediction = 0
     predictRain = soup.find('span', attrs={'data-testid':'PercentageValue'}).text
+    if predictRain < 30 :
+        predictRain = 30
     predictRain = float(predictRain.replace('%', ''))
 
     st.title("Prediksi Kecepatan Kurir")
@@ -279,6 +281,7 @@ elif selected == "Prediction" :
     #pembagian kolom
     col1, col2 = st.columns(2)
     distance = st.session_state['distance']
+
 
     with col1 : 
         distance = st.number_input("Jarak - m (auto)", value=int(distance), disabled=True)
